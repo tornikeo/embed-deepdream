@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://tornikeo.github.io/embed-deepdream/sitemap.xml
