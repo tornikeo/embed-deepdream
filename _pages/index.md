@@ -4,4 +4,4 @@ title: about
 permalink: /
 ---
 
-Hello
+{% include active-area.html %}
