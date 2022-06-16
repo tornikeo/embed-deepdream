@@ -7,3 +7,11 @@ $(document).ready(function() {
     });
     $('.navbar-nav').find('a').removeClass('waves-effect waves-light');
 });
+
+console.log(document.querySelector('#main-canvas'));
+
+$('#startbtn').on('click', (e) => {
+    console.log('START!');
+    console.log(`We also have this object to draw on ${$('#main-canvas')}`);
+    console.log(`Here's the tensorflow thingy! ${tf}`);
+})

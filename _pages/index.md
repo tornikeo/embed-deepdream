@@ -1,5 +1,5 @@
 ---
-layout: none
+layout: default-no-nav
 title: about
 permalink: /
 ---
