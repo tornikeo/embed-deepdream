@@ -1,0 +1,7 @@
+I"³<div id="active-area">
+    <img src="/embed-deepdream/assets/img/monkey.png" alt="" />
+    <canvas id="main-canvas">
+    </canvas>
+    <button id="startbtn">START</button>
+</div>
+:ET
