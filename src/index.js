@@ -10,11 +10,13 @@ import * as tf from '@tensorflow/tfjs';
 
 // Test import of styles
 import '@/styles/index.scss'
+import { $dataMetaSchema } from 'ajv';
 
 // Appending to the DOM
-const logo = document.createElement('img')
-logo.src = startImage
 
+const canvas = document.createElement('canvas');
+let img = document.createElement('img');
+let ctx = canvas.getContext('2d');
 const heading = document.createElement('h1')
 // heading.textContent = example()
 heading.textContent = "Deep Dream"
@@ -32,10 +34,31 @@ imagePublic.src = '/assets/example.png'
 
 
 const app = document.querySelector('#root')
-app.append(logo, heading, startButton )
+app.append(canvas, heading, startButton )
 
+const loadImage = path => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'Anonymous' // to avoid CORS if used with Canvas
+      img.src = path
+      img.onload = () => {
+        resolve(img)
+      }
+      img.onerror = e => {
+        reject(e)
+      }
+    })
+}
 
 async function main() {
+    let htmlImage = await loadImage(startImage);
+    var height = htmlImage.height;
+    var width = htmlImage.width;
+    canvas.height = height
+    canvas.width = width
+    ctx.drawImage(htmlImage, 0, 0)
+
+    let image = await tf.browser.fromPixels(canvas);
     let model = await tf.loadGraphModel("https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/feature_vector/3/default/1", { fromTFHub: true })
     // Computation
     // f(a, b) = a * b
@@ -44,27 +67,37 @@ async function main() {
     //     x = tf.relu(x);
     //     return x;
     // }
+    image = tf.expandDims(image, [0]);
+    let {mean,variance} = tf.moments(image);
+    let std = variance.sqrt()
+    image = image.sub(mean).div(std);
+    image = tf.image.resizeBilinear(image, [224,224])
+    console.log('Printing image stats: ');
+    console.log('MAX and MIN and MEAN and VAR');
+    tf.max(image).print()
+    tf.min(image).print();
+    ({mean,variance} = tf.moments(image));
+    mean.print();
+    variance.print();
+    console.log('IMAGE');
+    image.print(true);
+
+
     const f = (a) => {
         let x = model.execute(a);
         return x
     }
     
-    // df/da = b, df/db = a
     const g = tf.valueAndGrads(f);
     
-    const a = tf.randomNormal([1,224,224,3]);
-    // const b = tf.randomNormal([3,2]);
-    const {value, grads} = g([a]);
+    const {value, grads} = g([image]);
     
-    const [da] = grads;
-    
-    console.log('value');
-    value.print();
-    
-    console.log('da');
-    da.print(true);
-    // console.log('db');
-    // db.print();
+    const [dimage] = grads;    
+    console.log('OUTPUT VALS');
+    value.print(true);
+
+    console.log('OUTPUT IMAGE GRAD');
+    dimage.print(true);
 }
 
 main()
