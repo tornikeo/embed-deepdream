@@ -95,10 +95,11 @@ cd dist && http-server
   - - [`prettier`](https://github.com/prettier/prettier) - Dependency for `prettier-webpack-plugin` plugin
 - [`eslint-import-resolver-webpack`](https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers/webpack) - Throw exceptions for import/export in webpack
 
-## Author
+## Authors
 
-- [Tania Rascia](https://www.taniarascia.com)
-
+- Tensorflow stuff [TornikeO](https://tornikeo.github.io/)
+- Webpack boilerplate [Tania Rascia](https://www.taniarascia.com)
+- [And everyone else](https://github.com/tornikeo/embed-deepdream/graphs/contributors) <3!
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
