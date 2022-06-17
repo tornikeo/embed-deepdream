@@ -1,8 +1,15 @@
-# 📦 webpack Boilerplate
+# 🐒 Deep Dream Monkeys
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Sensible webpack 5 boilerplate using Babel, PostCSS and Sass.
+This is a TensorflowJS-Backed DeepDream sample code. Inspired by this [kaggle notebook](https://www.kaggle.com/code/paultimothymooney/pre-trained-pytorch-monkeys-a-deep-dream/notebook). Enjoy.
+
+TODO:
+- [x] Basic setup for npm and webpack
+- [x] Image loading works
+- [x] Image gradient can be obtained
+- [ ] Try image update wrt Mobilenet feature vectors
+- [ ] Update canvas and see results
 
 ## Installation
 
