@@ -10,6 +10,7 @@ TODO:
 - [x] Image gradient can be obtained
 - [ ] Try image update wrt Mobilenet feature vectors
 - [ ] Update canvas and see results
+- [ ] Make an actual, working [static website](https://tornikeo.github.io/embed-deepdream/).
 
 ## Installation
 
@@ -48,7 +49,7 @@ cd dist && http-server
 ```
 
 ## Features
-
+- [TensorflowJS](https://www.tensorflow.org/js)
 - [webpack](https://webpack.js.org/)
 - [Babel](https://babeljs.io/)
 - [Sass](https://sass-lang.com/)
