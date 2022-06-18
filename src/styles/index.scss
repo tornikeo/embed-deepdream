@@ -3,5 +3,14 @@
   src: url('../fonts/Inter.ttf');
 }
 
+
+body {
+  background-color: white;
+}
+
+#root {
+  background-color: white;
+}
+
 @import 'variables';
 @import 'scaffolding';

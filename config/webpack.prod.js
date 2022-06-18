@@ -10,7 +10,7 @@ module.exports = merge(common, {
   devtool: false,
   output: {
     path: paths.build,
-    publicPath: '/',
+    publicPath: '/embed-deepdream/',
     filename: 'js/[name].[contenthash].bundle.js',
   },
   module: {
