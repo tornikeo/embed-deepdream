@@ -8,9 +8,17 @@ TODO:
 - [x] Basic setup for npm and webpack
 - [x] Image loading works
 - [x] Image gradient can be obtained
-- [ ] Try image update wrt Mobilenet feature vectors
-- [ ] Update canvas and see results
-- [ ] Make an actual, working [static website](https://tornikeo.github.io/embed-deepdream/).
+- [x] Image update w.r.t. Mobilenet feature vectors
+- [x] Update canvas and see results
+- [x] Make an actual, working [static website](https://tornikeo.github.io/embed-deepdream/).
+- [ ] Fix visual artifacts for generated image
+  - [ ] Increase model resolution
+  - [ ] Replicate update loop from the original notebook
+  - [ ] Make model update CI loop (use Kaggle?)
+- [ ] Add UI elements 
+  - [ ] Upload image capability
+  - [ ] Various knobs and inputs (learning rate, steps, etc)
+- [ ] (Long term) Add GPU support
 
 ## Installation
 
