@@ -8,6 +8,8 @@ import startImage from '@/images/monkey.png'
 
 import * as tf from '@tensorflow/tfjs';
 
+// import modelPath from './js/models/deep_dream/model.json';
+
 // Test import of styles
 import '@/styles/index.scss'
 
@@ -35,31 +37,25 @@ const app = document.querySelector('#root')
 app.append(canvas) //heading, )//startButton)
 
 
-async function getGradient(model, image, seed) {
+async function getGradient(model, image, feature_layers=[0,1]) {
   let [b, h, w, c] = image.shape;
   image = tf.image.resizeBilinear(image, [224, 224])
+  let grads = [];
+  for (const layer of feature_layers) {
+    const f = (a) => {
+      let out = model.predict(a);
+      out = out[layer]; // TODO: Very shoddy gotta change this
+      return out
+    }
 
-  const f = (a) => {
-    let x = model.execute(a).slice([0,42],[-1,100]);
-    // x.print(true)
-    //TODO: Either change the base model
-    //      Or make x slice per-session fixed random
-    return x
+    const g = tf.grads(f);
+
+    // const { value, grads } = g([image]);
+    const [dimage] = g([image]);
+    dimage = tf.image.resizeBilinear(dimage, [h, w]);
+    grads.push(dimage);
   }
-
-  const g = tf.valueAndGrads(f);
-
-  const { value, grads } = g([image]);
-
-  let [dimage] = grads;
-  // console.log('OUTPUT VALS');
-  //  // value.print(true);
-
-  // console.log('OUTPUT IMAGE GRAD');
-  //  // dimage.print(true);
-
-  dimage = tf.image.resizeBilinear(dimage, [h, w]);
-  return dimage;
+  return grads;
 }
 
 
@@ -113,20 +109,23 @@ async function deprocessImage(image) {
   return image;
 }
 
-async function updateImage(image, grad, step_size) {
-  let { mean, variance } = tf.moments(grad);
-  let std = variance.sqrt();
-  std.print(true)
-  // grad = grad.sub(mean)
-  image = image.add(grad.mul(step_size))
-  //  await grad.print(true);
-  //  await image.print(true)
-  // console.log('HERE');
-  // ({mean,variance} = tf.moments(image))
-  //  // mean.print(true)
-  //  // image.max().print(true)
-  //  // image.min().print(true)
-  image = image.clipByValue(-1, 1);
+async function updateImage(image, grads, step_size) {
+  step_size /= grads.length;
+  for (const grad of grads) {
+    let { mean, variance } = tf.moments(grad);
+    let std = variance.sqrt();
+    // std.print(true)
+    // grad = grad.sub(mean)
+    image = image.add(grad.mul(step_size))
+    //  await grad.print(true);
+    //  await image.print(true)
+    // console.log('HERE');
+    // ({mean,variance} = tf.moments(image))
+    //  // mean.print(true)
+    //  // image.max().print(true)
+    //  // image.min().print(true)
+    image = image.clipByValue(-1, 1);
+  }
   return image;
 }
 
@@ -136,28 +135,26 @@ async function updateCanvas(image, canvas) {
 
 async function main() {
   let origImage = await loadImage();
-  let model = await tf.loadGraphModel("https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/feature_vector/2/default/1", { fromTFHub: true })
+  let modelPath = '/models/deep_dream/model.json'
+  let model = await tf.loadLayersModel(modelPath);
+  // model.summary();
 
-  let learning_rate = .5;
+
+  let learning_rate = .02;
   let prepImage = await preprocessImage(origImage);
-  let steps = 100;
+  let steps = 30;
 
-  // canvas.addEventListener('click', async () => {
-  //   // for (let i = 0; i < steps; i++) {
-  //     // console.log(`${i}/${steps}...`);
-  //     let grad = await getGradient(model, prepImage);
-  //     prepImage = await updateImage(prepImage, grad, learning_rate);
-  //     let image = await deprocessImage(prepImage);
-  //     await updateCanvas(image, canvas);
-  //   // }
-  // })
   for (let i = 0; i < steps; i++) {
     console.log(`${i}/${steps}...`);
-    let grad = await getGradient(model, prepImage);
-    prepImage = await updateImage(prepImage, grad, learning_rate);
+    let grads = await getGradient(model, prepImage, [3,4]);
+    prepImage = await updateImage(prepImage, grads, learning_rate);
     let image = await deprocessImage(prepImage);
     await updateCanvas(image, canvas);
   }
+
+  // let out = await model.predict(tf.randomNormal([1,224,224,3]))
+  // // out.print(true);
+  // console.log(out);
 }
 
-main()
+ main()
