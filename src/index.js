@@ -6,10 +6,15 @@ import webpackLogo from '@/images/webpack-logo.svg'
 
 import startImage from '@/images/monkey.png'
 
+// import modelPath from '../public/models/deep_dream/model.json'
+// import modelPath from '../public/models/deep_dream/'
+
+// import modelPath from '../public/models/deep_dream/model.json';
 import * as tf from '@tensorflow/tfjs';
-
+// import * as modelPath from './js/models/deep_dream/';
+// import modelPath from 'assets/models/deep_dream/';
 // import modelPath from './js/models/deep_dream/model.json';
-
+// console.log(modelPath);
 // Test import of styles
 import '@/styles/index.scss'
 
@@ -57,7 +62,6 @@ async function getGradient(model, image, feature_layers=[0,1]) {
   }
   return grads;
 }
-
 
 const loadImageElement = path => {
   return new Promise((resolve, reject) => {
@@ -135,26 +139,19 @@ async function updateCanvas(image, canvas) {
 
 async function main() {
   let origImage = await loadImage();
-  let modelPath = '/models/deep_dream/model.json'
-  let model = await tf.loadLayersModel(modelPath);
-  // model.summary();
+  let model = await tf.loadLayersModel('assets/models/deep_dream/model.json');
 
-
-  let learning_rate = .02;
+  let learning_rate = .022;
   let prepImage = await preprocessImage(origImage);
-  let steps = 30;
+  let steps = 100;
 
   for (let i = 0; i < steps; i++) {
     console.log(`${i}/${steps}...`);
-    let grads = await getGradient(model, prepImage, [3,4]);
+    let grads = await getGradient(model, prepImage, [2,3]);
     prepImage = await updateImage(prepImage, grads, learning_rate);
     let image = await deprocessImage(prepImage);
     await updateCanvas(image, canvas);
   }
-
-  // let out = await model.predict(tf.randomNormal([1,224,224,3]))
-  // // out.print(true);
-  // console.log(out);
 }
 
  main()
