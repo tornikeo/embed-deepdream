@@ -141,9 +141,9 @@ async function main() {
   let origImage = await loadImage();
   let model = await tf.loadLayersModel('assets/models/deep_dream/model.json');
 
-  let learning_rate = .022;
+  let learning_rate = .02;
   let prepImage = await preprocessImage(origImage);
-  let steps = 100;
+  let steps = 30;
 
   for (let i = 0; i < steps; i++) {
     console.log(`${i}/${steps}...`);
